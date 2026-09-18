@@ -19,18 +19,18 @@
 
 ## Current state
 
-- What works: full CRUD on MenuItems; Orders support create, add item to cart, remove/reduce cart item, pay, get receipt; a paid order rejects further cart changes; 9 xUnit tests passing (unit tests on Order.Total, controller tests on cart/pay/receipt rules); verified running locally on the owner's Windows machine via VS Code (Swagger UI reachable)
-- What is incomplete: no Vue frontend yet; no CORS policy yet (needed once the frontend exists); no auth; no deployment; no integration tests against the real HTTP pipeline (controller tests call the controller directly with an InMemory DbContext)
+- What works: full CRUD on MenuItems; Orders support create, add item to cart, remove/reduce cart item, pay, get receipt; a paid order rejects further cart changes; 9 xUnit tests passing; CORS policy configured for `localhost:5173`; Vue 3 frontend scaffolded and running; menu list page fetches and renders the real seeded menu end-to-end, verified in browser on the owner's Windows machine
+- What is incomplete: cart state, checkout, and receipt pages not built yet; no auth; no deployment; no integration tests against the real HTTP pipeline
 - Known errors: none currently
-- Recent changes: pushed to GitHub, full documentation set added (AGENTS.md, PROJECT_MEMORY.md, DECISIONS.md, HANDOFF_CHECKLIST.md, LEARNING_LOG.md), roadmap defined
-- Last verified command: `dotnet test` — 9/9 passed; `dotnet run` confirmed working on the owner's machine
+- Recent changes: menu list page built and working; CORS added; docs merged and pushed cleanly alongside the owner's frontend commit
+- Last verified command: `dotnet test` — 9/9 passed; browser confirmed the menu list renders the 4 real seeded items at `localhost:5173`
 
 ## Current goal
 
-- Task: build the Vue 3 frontend (Phase 2 of the roadmap in docs/PROJECT_MEMORY.md)
-- Definition of done: menu list, cart, checkout, and receipt pages working end-to-end against the existing API, in a browser
+- Task: build cart state next (Phase 2 of the roadmap in docs/PROJECT_MEMORY.md)
+- Definition of done: add/remove items to a cart, running total, wired to `POST /api/orders` and `POST /api/orders/{id}/items`
 - Constraints: owner is new to Vue; the Sept 22, 2026 IntouchCX call is a recruiter screening, not technical, so there is no hard deadline forcing this before then, but it should be ready in case a technical round follows
-- Files likely involved: new frontend/ directory; src/RestaurantOrderApi.Api/Program.cs (CORS policy)
+- Files likely involved: new frontend/src/components/Cart.vue; possibly a shared api.js helper; App.vue to wire menu selection into the cart
 
 ## Decisions already made
 

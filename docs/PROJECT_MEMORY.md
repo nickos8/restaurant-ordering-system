@@ -4,12 +4,12 @@
 >
 > Future assistant: read `AGENTS.md` and every document it references before changing the project. Inspect the working tree and tests because GitHub cannot contain uncommitted local work. Never document secrets.
 
-**Last updated:** 2026-09-17
+**Last updated:** 2026-09-18
 **Repository:** `nickos8/restaurant-order-api`
 **Default branch:** `main`
-**Latest verified code commit:** `69740e8` — **Scaffold Restaurant Order API in C# / ASP.NET Core**
-**Current phase:** Backend API complete; Vue 3 frontend not started
-**Next exact feature:** Scaffold `frontend/` with Vue 3 + Vite, starting with a menu list page that calls `GET /api/menuitems`
+**Latest verified code commit:** `de9a16c` — **Merge: Add CORS policy and Vue menu list page**
+**Current phase:** Backend API complete; Vue 3 frontend started, menu list page working end-to-end
+**Next exact feature:** Cart state (add/remove item, running total), wired to `POST /api/orders` and `POST /api/orders/{id}/items`
 **Working tree at checkpoint:** Local `main` clean and synchronized with `origin/main`
 
 ## 1. Purpose
@@ -77,6 +77,17 @@ C:\Users\Niko\restaurant-order-api
 - Manually verified the full flow with curl: select → add to cart → remove from cart → pay → receipt
 - Pushed to a private GitHub repository
 
+### Vue frontend, menu list page
+
+- `77f2988` — Add CORS policy and Vue menu list page
+- Added `builder.Services.AddCors(...)` in `Program.cs`, policy `FrontendDev` allowing `http://localhost:5173`, applied via `app.UseCors("FrontendDev")` before `MapControllers()`
+- Scaffolded `frontend/` with Vue 3 + Vite (no TypeScript, no router, no Pinia, no test runner, no lint/format tooling yet, kept deliberately minimal)
+- Built `frontend/src/components/MenuList.vue`: fetches `GET /api/menuitems` in `onMounted()`, stores the result in a `ref`, handles loading/error/success states with `v-if`/`v-else-if`/`v-else`, renders with `v-for`
+- Replaced the default `App.vue` boilerplate with `<MenuList />`
+- Manually verified in browser: the 4 real seeded menu items render correctly at `localhost:5173` while the API runs at `localhost:5281`
+- Owner independently diagnosed and cleaned up stray test data created via Swagger's "Try it out" defaults, understanding it was local dev data, not a code bug
+- Committed and pushed; merged cleanly with the documentation commit pushed in parallel
+
 ## 4. Domain model
 
 | Entity | Purpose |
@@ -117,9 +128,15 @@ Business rules enforced in `OrdersController`:
 
 Latest result: `dotnet test` — **9 passed, 0 failed**.
 
-## 7. Frontend (planned, not started)
+## 7. Frontend
 
-No `frontend/` directory exists yet. Planned stack: Vue 3 + Vite, calling the existing API. See the roadmap below for the intended build order.
+Stack: Vue 3 + Vite, calling the existing API directly by full URL (`http://localhost:5281/api/...`) for now; no shared API client module yet (see roadmap).
+
+### Menu list (`frontend/src/components/MenuList.vue`)
+
+Fetches the menu on mount, renders name, category, and price. Handles three states explicitly: loading, error (e.g. API not running), and success. This is the pattern every subsequent page (cart, checkout, receipt) will follow.
+
+See the roadmap below for the remaining build order.
 
 ## 8. Verification evidence
 
@@ -160,12 +177,12 @@ Verified the full order lifecycle end-to-end: seeded menu returned correctly; or
 | Manual API verification | Complete |
 | README | Complete |
 | Pushed to GitHub (private) | Complete |
-| Vue 3 frontend scaffold | Not started |
-| Menu list page | Not started |
+| Vue 3 frontend scaffold | Complete |
+| CORS policy for the frontend origin | Complete |
+| Menu list page | Complete |
 | Cart UI | Not started |
 | Checkout UI | Not started |
 | Receipt view | Not started |
-| CORS configuration for the frontend origin | Not started |
 | Frontend build/lint verification | Not started |
 | Screenshots in README | Not started |
 | Deployment | Not planned yet (stretch) |
@@ -219,11 +236,11 @@ dotnet test
 - [x] Pushed to GitHub (private)
 - [x] Verified running locally on the owner's Windows machine via VS Code
 
-### Phase 2 — Vue 3 frontend (next)
+### Phase 2 — Vue 3 frontend (in progress)
 
-- [ ] Scaffold `frontend/` with Vue 3 + Vite
-- [ ] Configure the API to allow the Vite dev server origin via CORS
-- [ ] Menu list page (`GET /api/menuitems`)
+- [x] Scaffold `frontend/` with Vue 3 + Vite
+- [x] Configure the API to allow the Vite dev server origin via CORS
+- [x] Menu list page (`GET /api/menuitems`)
 - [ ] Cart state: add item, remove/reduce item, running total
 - [ ] Create order and add cart items to it (`POST /api/orders`, `POST /api/orders/{id}/items`)
 - [ ] Checkout page (`POST /api/orders/{id}/pay`)

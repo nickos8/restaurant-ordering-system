@@ -70,15 +70,38 @@ Generates and applies schema changes. Migrations are applied automatically on AP
 
 Same habits as `developer-portfolio`: confirm no build output, database files, or secrets are staged before committing; confirm the local branch and `origin/main` agree before pushing.
 
+## Vue foundations (confirmed)
+
+### Single-file components
+
+A `.vue` file holds `<script setup>`, `<template>`, and `<style scoped>` together, the same role a React `.jsx` file plays in `developer-portfolio`, just with template and script kept in clearly separated blocks instead of mixed as JSX.
+
+### `ref()` as Vue's `useState`
+
+`ref(initialValue)` creates a reactive value. Reading/writing it in `<script setup>` uses `.value`; the template auto-unwraps it, no `.value` needed there. Confirmed understanding of the actual mechanism, not just the end value: Vue's reactivity system tracks which DOM nodes depend on which `ref`, and patches only those nodes when the value changes, rather than re-rendering the whole page.
+
+### `onMounted()` as the equivalent of React's `useEffect(fn, [])`
+
+Code inside `onMounted()` runs once, after the component is added to the page, the correct place to kick off a data fetch.
+
+### Fetching data: the three-state pattern
+
+`MenuList.vue` uses `isLoading`, `errorMessage`, and the data itself (`menuItems`) as three separate `ref`s, and the template branches on all three with `v-if`/`v-else-if`/`v-else`. This is the reusable pattern for every future page that loads data from the API.
+
+### CORS, applied on the ASP.NET Core side
+
+Already understood in principle from `developer-portfolio`'s Laravel CORS work. Re-applied here as `builder.Services.AddCors(...)` with a named policy, then `app.UseCors("policyName")` in the middleware pipeline before `app.MapControllers()`. Confirmed working: the browser fetch from `localhost:5173` to `localhost:5281` succeeded once the policy was added.
+
+### Swagger's default placeholder values are real data, not documentation
+
+Clicking "Try it out" → "Execute" in Swagger without changing the example values (`"string"`, a placeholder number) actually creates that row in the database, since Swagger is a live client, not a mockup. The owner independently correctly diagnosed 3 stray "string" rows in the rendered menu as leftover test data rather than a bug in the fetch code, and cleaned it up by deleting the local `.db` file and letting migrations reseed it.
+
 ## Concepts to reinforce next (Vue, still new)
 
-- Vue 3 Composition API vs Options API, and which one this project will use
-- reactive state (`ref`, `reactive`) compared to React's `useState`
-- component structure and props, compared to React components
-- calling a REST API from Vue (`fetch` or `axios`, same libraries/concepts as the React frontend already used in `developer-portfolio`)
-- CORS: why the browser blocks API calls from a different origin during local development, and how a backend CORS policy fixes it (already understood in principle from `developer-portfolio`'s Laravel CORS work; needs to be re-applied on the ASP.NET Core side)
+- Vue 3 Composition API vs Options API (this project uses Composition API via `<script setup>`, but explaining the distinction is still worth practicing)
 - Vue Router, if the frontend grows beyond a single page
-- component-level state vs a shared store (e.g. Pinia), if cart state needs to be shared across multiple components
+- component-level state vs a shared store (e.g. Pinia), once cart state needs to be shared across multiple components (menu page adding to a cart another component displays)
+- form input binding with `v-model`, needed for the checkout/payment-method step
 
 ## Concepts to reinforce later (stretch phase)
 
