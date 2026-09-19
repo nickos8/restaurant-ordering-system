@@ -96,12 +96,35 @@ Already understood in principle from `developer-portfolio`'s Laravel CORS work. 
 
 Clicking "Try it out" → "Execute" in Swagger without changing the example values (`"string"`, a placeholder number) actually creates that row in the database, since Swagger is a live client, not a mockup. The owner independently correctly diagnosed 3 stray "string" rows in the rendered menu as leftover test data rather than a bug in the fetch code, and cleaned it up by deleting the local `.db` file and letting migrations reseed it.
 
+## Vue component communication (confirmed)
+
+### Props (parent to child)
+
+Data flows one direction, down. `App.vue` passes `:items="cart"` to `<Cart>`; inside `Cart.vue`, `defineProps({ items: { type: Array, required: true } })` receives it. The child can read the prop but must never reassign it directly (mutating an object inside the array is fine, replacing the prop itself is not).
+
+### Emits (child to parent)
+
+The reverse direction: a child reports "this happened" upward with `emit('event-name', payload)`, and the parent listens with `@event-name="handler"` on the child's tag. Confirmed through real tracing: `Cart.vue`'s `+` button emits `increase-item` with a menu item id, `App.vue` catches it via `@increase-item="handleIncreaseItem"`, and `handleIncreaseItem` is the only place that actually mutates `cart`.
+
+### Why state lives in the parent, not each child
+
+`MenuList.vue` and `Cart.vue` are siblings, neither can see the other's data directly. Since both need to affect the same cart, the cart has to live in their common parent, `App.vue`, as a `ref`. This is the same "lift state up" pattern as React; Vue's answer is props down, emits up, exactly one owner of the real data.
+
+### `computed()` re-verified after an initial gap
+
+First teach-back conflated the consequence (needing manual updates) with the actual failure mode (a stale, silently wrong total shown with no error). Corrected: a plain `const total = ...` would calculate once and freeze, `computed()` re-runs its formula whenever `props.items` changes, because Vue tracks what a computed function reads. Confirmed understanding held up under a second, harder question about why the Cart's total updates automatically when quantity changes deep inside a prop array.
+
+### Diagnosed misconception, corrected: no backend call happens yet
+
+First teach-back on the +/- button flow assumed clicking "+" calls the API to update an existing order. Corrected: the cart is currently 100% client-side JavaScript state in `App.vue`, no HTTP request happens on any cart change. This is deliberate groundwork for the next lesson (wiring the cart to real `POST /api/orders` calls), not a bug.
+
 ## Concepts to reinforce next (Vue, still new)
 
 - Vue 3 Composition API vs Options API (this project uses Composition API via `<script setup>`, but explaining the distinction is still worth practicing)
 - Vue Router, if the frontend grows beyond a single page
-- component-level state vs a shared store (e.g. Pinia), once cart state needs to be shared across multiple components (menu page adding to a cart another component displays)
+- component-level state vs a shared store (e.g. Pinia), if cart state ever needs to be shared beyond `App.vue`'s direct children
 - form input binding with `v-model`, needed for the checkout/payment-method step
+- chaining multiple `async`/`await` API calls in sequence (create order, then add each item, then pay), and what to do if one call in the middle fails
 
 ## Concepts to reinforce later (stretch phase)
 

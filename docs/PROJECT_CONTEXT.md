@@ -19,18 +19,18 @@
 
 ## Current state
 
-- What works: full CRUD on MenuItems; Orders support create, add item to cart, remove/reduce cart item, pay, get receipt; a paid order rejects further cart changes; 9 xUnit tests passing; CORS policy configured for `localhost:5173`; Vue 3 frontend scaffolded and running; menu list page fetches and renders the real seeded menu end-to-end, verified in browser on the owner's Windows machine
-- What is incomplete: cart state, checkout, and receipt pages not built yet; no auth; no deployment; no integration tests against the real HTTP pipeline
+- What works: full CRUD on MenuItems; Orders support create, add item to cart, remove/reduce cart item, pay, get receipt (backend only so far); 9 xUnit tests passing; CORS configured for `localhost:5173`; Vue frontend has a working menu list (fetches real seeded data) and a working client-side cart (add, increase, decrease, running total via `computed()`), all verified in browser on the owner's Windows machine
+- What is incomplete: cart is not wired to the backend yet, no order actually gets created when the browser cart changes; no checkout or receipt page; no auth; no deployment; no integration tests against the real HTTP pipeline
 - Known errors: none currently
-- Recent changes: menu list page built and working; CORS added; docs merged and pushed cleanly alongside the owner's frontend commit
-- Last verified command: `dotnet test` — 9/9 passed; browser confirmed the menu list renders the 4 real seeded items at `localhost:5173`
+- Recent changes: cart state built (MenuList emits add-to-cart, Cart emits increase/decrease-item, App.vue owns the shared cart ref), verified end-to-end in browser, committed and pushed
+- Last verified command: `dotnet test` — 9/9 passed; browser confirmed cart math (150×2 + 45 + 95 = ₱440.00) and reactive total updates
 
 ## Current goal
 
-- Task: build cart state next (Phase 2 of the roadmap in docs/PROJECT_MEMORY.md)
-- Definition of done: add/remove items to a cart, running total, wired to `POST /api/orders` and `POST /api/orders/{id}/items`
+- Task: wire the client-side cart to the real backend order (Phase 2 of the roadmap in docs/PROJECT_MEMORY.md)
+- Definition of done: checkout creates a real `Order` via `POST /api/orders`, sends each cart line via `POST /api/orders/{id}/items`, a checkout button calls `POST /api/orders/{id}/pay`, and a receipt view calls `GET /api/orders/{id}/receipt`
 - Constraints: owner is new to Vue; the Sept 22, 2026 IntouchCX call is a recruiter screening, not technical, so there is no hard deadline forcing this before then, but it should be ready in case a technical round follows
-- Files likely involved: new frontend/src/components/Cart.vue; possibly a shared api.js helper; App.vue to wire menu selection into the cart
+- Files likely involved: App.vue (checkout handler, sequencing the API calls); a new Checkout.vue or extending Cart.vue; a new Receipt.vue
 
 ## Decisions already made
 
