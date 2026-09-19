@@ -4,12 +4,12 @@
 >
 > Future assistant: read `AGENTS.md` and every document it references before changing the project. Inspect the working tree and tests because GitHub cannot contain uncommitted local work. Never document secrets.
 
-**Last updated:** 2026-09-18
+**Last updated:** 2026-09-19
 **Repository:** `nickos8/restaurant-order-api`
 **Default branch:** `main`
-**Latest verified code commit:** `de9a16c` — **Merge: Add CORS policy and Vue menu list page**
-**Current phase:** Backend API complete; Vue 3 frontend started, menu list page working end-to-end
-**Next exact feature:** Cart state (add/remove item, running total), wired to `POST /api/orders` and `POST /api/orders/{id}/items`
+**Latest verified code commit:** `041cc1a` — **add cart state with props/emits between menulist, cart, app**
+**Current phase:** Backend API complete; Vue frontend has a working menu list and client-side cart (add, increase, decrease, running total), not yet wired to the backend order endpoints
+**Next exact feature:** Wire the cart to the real backend order: `POST /api/orders` on checkout start, `POST /api/orders/{id}/items` per cart line, a checkout button (`POST /api/orders/{id}/pay`), and a receipt view (`GET /api/orders/{id}/receipt`)
 **Working tree at checkpoint:** Local `main` clean and synchronized with `origin/main`
 
 ## 1. Purpose
@@ -87,6 +87,16 @@ C:\Users\Niko\restaurant-order-api
 - Manually verified in browser: the 4 real seeded menu items render correctly at `localhost:5173` while the API runs at `localhost:5281`
 - Owner independently diagnosed and cleaned up stray test data created via Swagger's "Try it out" defaults, understanding it was local dev data, not a code bug
 - Committed and pushed; merged cleanly with the documentation commit pushed in parallel
+
+### Vue frontend, cart state
+
+- `041cc1a` — add cart state with props/emits between menulist, cart, app
+- `frontend/src/components/MenuList.vue`: added an "Add to Cart" button per item, emits `add-to-cart` with the menu item
+- `frontend/src/components/Cart.vue` (new): receives `items` as a prop, renders each line with quantity +/- controls, emits `increase-item`/`decrease-item` with the menu item id, computes `total` reactively with `computed()`
+- `frontend/src/App.vue`: owns the shared `cart` ref, listens for `@add-to-cart`, `@increase-item`, `@decrease-item`, passes `cart` down to `Cart` as `:items`
+- Cart is entirely client-side at this point; no backend order exists yet, no HTTP requests happen on cart changes
+- Manually verified in browser: add multiple items, increase/decrease quantity, remove on decrease-to-zero, running total stays correct (verified 150×2 + 45 + 95 = ₱440.00)
+- Owner correctly traced the full emit-up/update/prop-down/re-render cycle through the real code after a diagnosed misconception (initially assumed a backend API call happens on cart changes; corrected)
 
 ## 4. Domain model
 
@@ -180,7 +190,7 @@ Verified the full order lifecycle end-to-end: seeded menu returned correctly; or
 | Vue 3 frontend scaffold | Complete |
 | CORS policy for the frontend origin | Complete |
 | Menu list page | Complete |
-| Cart UI | Not started |
+| Cart UI | Complete (client-side only) |
 | Checkout UI | Not started |
 | Receipt view | Not started |
 | Frontend build/lint verification | Not started |
@@ -241,7 +251,7 @@ dotnet test
 - [x] Scaffold `frontend/` with Vue 3 + Vite
 - [x] Configure the API to allow the Vite dev server origin via CORS
 - [x] Menu list page (`GET /api/menuitems`)
-- [ ] Cart state: add item, remove/reduce item, running total
+- [x] Cart state: add item, remove/reduce item, running total (client-side)
 - [ ] Create order and add cart items to it (`POST /api/orders`, `POST /api/orders/{id}/items`)
 - [ ] Checkout page (`POST /api/orders/{id}/pay`)
 - [ ] Receipt view (`GET /api/orders/{id}/receipt`)
