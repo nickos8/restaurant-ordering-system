@@ -5,10 +5,14 @@ const props = defineProps({
   items: {
     type: Array,
     required: true
+  },
+  isCheckingOut: {
+    type: Boolean,
+    default: false
   }
 })
 
-const emit = defineEmits(['increase-item', 'decrease-item'])
+const emit = defineEmits(['increase-item', 'decrease-item', 'checkout'])
 
 const total = computed(() =>
   props.items.reduce((sum, line) => sum + line.price * line.quantity, 0)
@@ -37,6 +41,15 @@ const total = computed(() =>
       <span>Total</span>
       <span>₱{{ total.toFixed(2) }}</span>
     </div>
+
+    <div v-if="items.length > 0" class="checkout-row">
+      <button :disabled="isCheckingOut" @click="emit('checkout', 'Cash')">
+        {{ isCheckingOut ? 'Placing order...' : 'Pay with Cash' }}
+      </button>
+      <button :disabled="isCheckingOut" @click="emit('checkout', 'Card')">
+        {{ isCheckingOut ? 'Placing order...' : 'Pay with Card' }}
+      </button>
+    </div>
   </div>
 </template>
 
@@ -49,4 +62,7 @@ li { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bott
 .qty-controls button { width: 24px; cursor: pointer; }
 .line-total { font-weight: 600; min-width: 70px; text-align: right; }
 .total-row { display: flex; justify-content: space-between; font-weight: 700; padding-top: 10px; }
+.checkout-row { display: flex; gap: 10px; margin-top: 16px; }
+.checkout-row button { flex: 1; padding: 10px; cursor: pointer; }
+.checkout-row button:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>
