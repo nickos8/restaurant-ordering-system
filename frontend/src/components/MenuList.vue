@@ -5,6 +5,8 @@ const menuItems = ref([])
 const isLoading = ref(true)
 const errorMessage = ref('')
 
+const emit = defineEmits(['add-to-cart'])
+
 onMounted(async () => {
   try {
     const response = await fetch('http://localhost:5281/api/menuitems')
@@ -30,6 +32,7 @@ onMounted(async () => {
         <span class="name">{{ item.name }}</span>
         <span class="category">{{ item.category }}</span>
         <span class="price">₱{{ item.price.toFixed(2) }}</span>
+        <button @click="emit('add-to-cart', item)">Add to Cart</button>
       </li>
     </ul>
   </div>
@@ -38,7 +41,9 @@ onMounted(async () => {
 <style scoped>
 .menu-list { max-width: 480px; margin: 40px auto; font-family: sans-serif; }
 ul { list-style: none; padding: 0; }
-li { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #ddd; }
+li { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #ddd; }
+.name { flex: 1; }
 .category { color: #888; font-size: .85rem; }
 .price { font-weight: 600; }
+button { padding: 4px 10px; cursor: pointer; }
 </style>
