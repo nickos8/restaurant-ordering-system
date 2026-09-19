@@ -77,6 +77,7 @@ Confirm that none of these are included:
 - `node_modules/`, `dist/` (once the frontend exists)
 - `*.db`, `*.db-shm`, `*.db-wal` (local SQLite database files)
 - unrelated archives or temporary files
+- accidental duplicate folders (e.g. a stray "... copy" or "... (1)" folder from an editor's file explorer, run `git status --short --untracked-files=all` and actually read the file list before staging, not just `git add .` on faith; this has happened once already in this project, see `docs/DECISIONS.md`)
 
 ## Staging and committing
 

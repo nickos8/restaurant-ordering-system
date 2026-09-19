@@ -118,13 +118,26 @@ First teach-back conflated the consequence (needing manual updates) with the act
 
 First teach-back on the +/- button flow assumed clicking "+" calls the API to update an existing order. Corrected: the cart is currently 100% client-side JavaScript state in `App.vue`, no HTTP request happens on any cart change. This is deliberate groundwork for the next lesson (wiring the cart to real `POST /api/orders` calls), not a bug.
 
+## Chaining async API calls (confirmed, after two corrections)
+
+### `await` inside a `for...of` loop, not `.forEach`
+
+Confirmed understanding of why `for...of` was used to add cart items one at a time: `await` inside `.forEach()` does not actually pause anything, since the callback passed to `.forEach` isn't awaited by `.forEach` itself, so all requests would fire concurrently instead of one after another. `for...of` correctly pauses on each `await`.
+
+### An uncaught error inside `await` is a hard stop, not a skip
+
+First teach-back assumed a failed `await addItemToOrder(...)` on item 2 of 3 would skip to item 3 and continue normally, "every await is a checkpoint." Corrected: a thrown error inside an `async` function immediately exits that function; nothing after the failing line runs, not the rest of the loop, not `payOrder`, not the receipt fetch. Confirmed with a clearer mental model: `await` is not a checkpoint you pass through, it's a single point of failure that stops everything below it if it fails.
+
+### Why one `try/catch` around the whole sequence, not one per step
+
+First answer named the right outcome (errors get handled) without explaining why wrapping the *entire* function beats wrapping each step separately. Corrected: catching and swallowing an error at one step, without stopping, would let execution wrongly continue into later steps, for example trying to pay for an order that never got its items added. One wrapper around everything correctly enforces "the whole checkout either fully succeeds or it doesn't," matching the actual business rule decided for this project.
+
 ## Concepts to reinforce next (Vue, still new)
 
 - Vue 3 Composition API vs Options API (this project uses Composition API via `<script setup>`, but explaining the distinction is still worth practicing)
 - Vue Router, if the frontend grows beyond a single page
 - component-level state vs a shared store (e.g. Pinia), if cart state ever needs to be shared beyond `App.vue`'s direct children
-- form input binding with `v-model`, needed for the checkout/payment-method step
-- chaining multiple `async`/`await` API calls in sequence (create order, then add each item, then pay), and what to do if one call in the middle fails
+- form input binding with `v-model` (sidestepped for now, checkout uses fixed Cash/Card buttons instead of free text)
 
 ## Concepts to reinforce later (stretch phase)
 

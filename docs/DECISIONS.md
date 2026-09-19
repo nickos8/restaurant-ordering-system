@@ -80,13 +80,33 @@
 
 **Revisit when:** not applicable — this is the committed direction for this project.
 
-### CORS will be configured explicitly for the Vite dev server origin
+### Order is created only at checkout, not on first "Add to Cart"
 
-**Decision status:** Planned, not yet implemented.
+**Decision:** The cart is pure client-side state until the user clicks "Pay with Cash" or "Pay with Card." Only then does `App.vue` call `POST /api/orders`, add every cart line, and pay.
 
-**Current direction:** Add an explicit CORS policy in `Program.cs` allowing the local Vite dev server origin (typically `http://localhost:5173`) with credentials disabled (no cookies/auth planned for the core project).
+**Reason:** Simpler to build and reason about, matches how most shopping carts actually behave (nothing is "reserved" server-side until checkout), and matches the roadmap's original plan. The alternative (syncing every cart click to the backend in real time) adds real complexity (a network call per click, handling a failed sync mid-browse) for no benefit at this project's scale.
 
-**Reason:** The API and frontend run on different local ports during development, so the browser will block requests without an explicit CORS policy.
+**Alternatives rejected:** Creating the order on the first "Add to Cart" click and keeping it in sync live, more realistic for a staffed POS system, but not worth the added complexity for a portfolio project under a tight timeline.
+
+### Checkout uses one `try/catch` around the whole sequence, with a hard stop on failure
+
+**Decision:** `handleCheckout` wraps all 4 API calls (create order, add each item, pay) in a single `try/catch`. Any failure stops the entire sequence immediately, no rollback or partial recovery is attempted, and the cart is left untouched so the user can retry.
+
+**Reason:** Correct and simple. A failure at any step means the checkout as a whole didn't succeed, there's no meaningful "partially successful" checkout to preserve. Per-step error handling would risk silently continuing into later steps (e.g. paying for an order that never got its items added).
+
+**Known limitation:** If the failure happens after the order was created but before payment, that order is left sitting on the backend in an `Open`, unpaid state. There is currently no cancel/cleanup endpoint. Acceptable for a portfolio project; worth naming honestly if asked in an interview.
+
+### Payment method is a fixed choice (Cash / Card buttons), not free text
+
+**Decision:** Checkout offers two buttons with hardcoded payment method strings, rather than a text input or dropdown.
+
+**Reason:** Removes the possibility of bad input entirely (empty string, typos), keeps the UI simpler, and avoids needing `v-model` for this step. A dropdown or text input can be added later if more payment methods are needed.
+
+### CORS configured explicitly for the Vite dev server origin
+
+**Decision:** `Program.cs` adds a named CORS policy (`FrontendDev`) allowing `http://localhost:5173`, applied via `app.UseCors("FrontendDev")` before `MapControllers()`. No credentials/cookies involved, this project has no auth.
+
+**Reason:** The API and frontend run on different local ports during development, so the browser blocks requests without an explicit CORS policy. Confirmed working: menu fetch, cart checkout, and receipt calls all succeed from `localhost:5173` to `localhost:5281`.
 
 ## Version control and handoff
 

@@ -7,9 +7,9 @@
 **Last updated:** 2026-09-19
 **Repository:** `nickos8/restaurant-order-api`
 **Default branch:** `main`
-**Latest verified code commit:** `041cc1a` — **add cart state with props/emits between menulist, cart, app**
-**Current phase:** Backend API complete; Vue frontend has a working menu list and client-side cart (add, increase, decrease, running total), not yet wired to the backend order endpoints
-**Next exact feature:** Wire the cart to the real backend order: `POST /api/orders` on checkout start, `POST /api/orders/{id}/items` per cart line, a checkout button (`POST /api/orders/{id}/pay`), and a receipt view (`GET /api/orders/{id}/receipt`)
+**Latest verified code commit:** `8a50f18` — **Remove accidental duplicate API project folder**
+**Current phase:** Phase 2 (Vue frontend) complete. Full flow works end to end: browse menu, build a cart, checkout, see a receipt, backed by the real C# API.
+**Next exact feature:** Phase 3 (quality and interview readiness): `npm run build` verification, README update with screenshots, and practicing explaining the architecture out loud. See roadmap section 11.
 **Working tree at checkpoint:** Local `main` clean and synchronized with `origin/main`
 
 ## 1. Purpose
@@ -97,6 +97,17 @@ C:\Users\Niko\restaurant-order-api
 - Cart is entirely client-side at this point; no backend order exists yet, no HTTP requests happen on cart changes
 - Manually verified in browser: add multiple items, increase/decrease quantity, remove on decrease-to-zero, running total stays correct (verified 150×2 + 45 + 95 = ₱440.00)
 - Owner correctly traced the full emit-up/update/prop-down/re-render cycle through the real code after a diagnosed misconception (initially assumed a backend API call happens on cart changes; corrected)
+
+### Vue frontend, checkout wired to the backend
+
+- `3ad804e` — Wire cart to backend: checkout creates order, adds items, pays, shows receipt
+- `frontend/src/components/Cart.vue`: added a checkout section with two fixed payment buttons ("Pay with Cash" / "Pay with Card"), disabled while a checkout request is in flight, emits `checkout` with the chosen payment method
+- `frontend/src/components/Receipt.vue` (new): renders the paid order's items, total, payment method, and timestamp; emits `start-new-order` to return to browsing
+- `frontend/src/App.vue`: added `handleCheckout(paymentMethod)`, an `async` function chaining 4 sequential API calls inside one `try/catch`: `POST /api/orders` → `POST /api/orders/{id}/items` per cart line (in a `for...of` loop, not `.forEach`, so each `await` actually pauses) → `POST /api/orders/{id}/pay` → the pay response is used directly as the receipt (no separate `GET /api/orders/{id}/receipt` call needed in this flow, since `Pay` already returns the full receipt)
+- On any failure, the whole sequence stops (a hard stop, not a skip to the next step), the cart is preserved unchanged, and an error message displays; on success the cart clears and the Receipt view replaces the Menu/Cart view
+- Manually verified in browser: full checkout with 6x Adobo Rice Bowl, paid via Card, correct total (₱900.00), real order id from the database (`Order #4`), receipt rendered correctly
+- Corrected two teach-back misconceptions: (1) initial belief that an uncaught `await` error inside a loop skips to the next iteration and continues (corrected: it's a hard stop, nothing after it runs); (2) initial reasoning for one big `try/catch` over one per step didn't identify the real risk (a caught-and-swallowed per-step error would let execution wrongly continue to `payOrder` for an incomplete order)
+- Cleaned up an accidental duplicate `src/RestaurantOrderApi.Api copy/` folder that got committed alongside this work (`8a50f18`), traced to a stray VS Code Explorer duplicate action
 
 ## 4. Domain model
 
@@ -191,8 +202,8 @@ Verified the full order lifecycle end-to-end: seeded menu returned correctly; or
 | CORS policy for the frontend origin | Complete |
 | Menu list page | Complete |
 | Cart UI | Complete (client-side only) |
-| Checkout UI | Not started |
-| Receipt view | Not started |
+| Checkout UI | Complete |
+| Receipt view | Complete |
 | Frontend build/lint verification | Not started |
 | Screenshots in README | Not started |
 | Deployment | Not planned yet (stretch) |
@@ -252,10 +263,10 @@ dotnet test
 - [x] Configure the API to allow the Vite dev server origin via CORS
 - [x] Menu list page (`GET /api/menuitems`)
 - [x] Cart state: add item, remove/reduce item, running total (client-side)
-- [ ] Create order and add cart items to it (`POST /api/orders`, `POST /api/orders/{id}/items`)
-- [ ] Checkout page (`POST /api/orders/{id}/pay`)
-- [ ] Receipt view (`GET /api/orders/{id}/receipt`)
-- [ ] Loading, empty, and error states
+- [x] Create order and add cart items to it (`POST /api/orders`, `POST /api/orders/{id}/items`)
+- [x] Checkout page (`POST /api/orders/{id}/pay`)
+- [x] Receipt view (uses the response from `Pay` directly; `GET /api/orders/{id}/receipt` exists and works but isn't called in this flow)
+- [x] Loading, empty, and error states (menu loading/error; cart empty state; checkout error message)
 - [ ] Basic, clean styling (no framework required, but a lightweight one is fine)
 
 ### Phase 3 — Quality and interview readiness
