@@ -132,6 +132,30 @@ First teach-back assumed a failed `await addItemToOrder(...)` on item 2 of 3 wou
 
 First answer named the right outcome (errors get handled) without explaining why wrapping the *entire* function beats wrapping each step separately. Corrected: catching and swallowing an error at one step, without stopping, would let execution wrongly continue into later steps, for example trying to pay for an order that never got its items added. One wrapper around everything correctly enforces "the whole checkout either fully succeeds or it doesn't," matching the actual business rule decided for this project.
 
+## xUnit fundamentals (confirmed, first from-scratch test written)
+
+### Arrange-Act-Assert
+
+Confirmed understanding of the AAA shape every test follows: set up data (Arrange), run the code under test (Act, sometimes implicit when the "action" is just reading a property), then check the result against an expectation (Assert). `[Fact]` marks a method as a test xUnit will discover and run.
+
+### A test only knows what you tell it is correct
+
+Correctly explained, unprompted, that a test doesn't independently know the "right" answer, it compares the actual result to whatever expected value was written into the `Assert`. Verified this hands-on by deliberately changing two passing tests' expected values (`Assert.Equal(3455.00m, ...)` and `Assert.Equal(5m, ...)`) to force real failures, reading the actual `[FAIL]` output with `Expected:`/`Actual:` values, then restoring the correct values and confirming all tests passed again. This was self-directed, not instructed, a strong sign of real understanding rather than memorized steps.
+
+### Wrote a first test from scratch, unaided
+
+`NewOrder_DefaultsToOpenStatus` in `OrderTotalTests.cs`, written correctly on the first attempt with no example directly in front of them:
+```csharp
+[Fact]
+public void NewOrder_DefaultsToOpenStatus()
+{
+    var order = new Order();
+
+    Assert.Equal(OrderStatus.Open, order.Status);
+}
+```
+Test suite is now 10/10 passing, one of which the owner wrote themselves.
+
 ## Concepts to reinforce next (Vue, still new)
 
 - Vue 3 Composition API vs Options API (this project uses Composition API via `<script setup>`, but explaining the distinction is still worth practicing)

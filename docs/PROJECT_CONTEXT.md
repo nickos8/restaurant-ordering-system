@@ -19,18 +19,18 @@
 
 ## Current state
 
-- What works: full CRUD on MenuItems; complete Orders lifecycle (create, add/remove cart item, pay, receipt); 9 xUnit tests passing; CORS configured for `localhost:5173`; Vue frontend has a working menu list, client-side cart, and a full checkout flow wired to the real backend, all verified end-to-end in browser on the owner's Windows machine (order #4, 6x Adobo Rice Bowl, paid via Card, ₱900.00, real receipt rendered)
-- What is incomplete: no styling pass yet (plain unstyled HTML controls); `npm run build` not yet verified; README not yet updated with frontend info/screenshots; no auth; no deployment; no integration tests against the real HTTP pipeline
+- What works: full CRUD on MenuItems; complete Orders lifecycle (create, add/remove cart item, pay, receipt); 10 xUnit tests passing (one written from scratch by the owner); CORS configured for `localhost:5173`; Vue frontend has a working, styled menu list, client-side cart, and a full checkout flow wired to the real backend, all verified end-to-end in browser (order #4, 6x Adobo Rice Bowl, paid via Card, ₱900.00, real receipt rendered); `npm run build` verified (686ms, clean production bundle)
+- What is incomplete: README not yet updated with frontend info/screenshots; no auth; no deployment; no integration tests against the real HTTP pipeline; interview-talk practice not yet done
 - Known errors: none currently
-- Recent changes: checkout wired to backend (create order, add items, pay, show receipt), an accidental duplicate `src/RestaurantOrderApi.Api copy/` folder was committed and then cleanly removed, docs updated to mark Phase 2 complete
-- Last verified command: `dotnet test` — 9/9 passed; full browser checkout verified end-to-end
+- Recent changes: styling pass applied (CSS custom properties, no framework), production build verified, owner learned xUnit fundamentals and wrote + verified their own test from scratch, a full read-only code audit was produced (`REVIEW_INPUT.md`, untracked, awaiting the owner's decision on whether to commit it publicly or keep it private)
+- Last verified command: `dotnet test` — 10/10 passed; `npm run build` succeeded; full browser checkout verified end-to-end
 
 ## Current goal
 
-- Task: Phase 3 of the roadmap, quality and interview readiness
-- Definition of done: `npm run build` succeeds, basic clean styling applied, README updated with frontend setup and screenshots, owner can explain the full stack (backend + frontend) out loud without notes
-- Constraints: the Sept 22, 2026 IntouchCX call is a recruiter screening, not technical, so there is no hard deadline forcing this before then, but it should be ready in case a technical round follows; ~2-3 days remain before that call
-- Files likely involved: all frontend `.vue` files (styling pass), README.md, possibly a shared `frontend/src/api.js` to reduce repeated `fetch` boilerplate across components
+- Task: finish Phase 3, then shift fully into interview prep
+- Definition of done: README updated with frontend setup and a screenshot, owner can explain the full stack (backend + frontend) out loud without notes, decision made on `REVIEW_INPUT.md` (commit or keep private)
+- Constraints: the Sept 22, 2026 IntouchCX call is a recruiter screening, not technical, so there is no hard deadline forcing this before then, but it should be ready in case a technical round follows; ~2 days remain before that call
+- Files likely involved: README.md (add frontend section + screenshot); no more component code changes expected unless something breaks
 
 ## Decisions already made
 

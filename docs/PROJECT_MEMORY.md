@@ -4,12 +4,12 @@
 >
 > Future assistant: read `AGENTS.md` and every document it references before changing the project. Inspect the working tree and tests because GitHub cannot contain uncommitted local work. Never document secrets.
 
-**Last updated:** 2026-09-19
+**Last updated:** 2026-09-20
 **Repository:** `nickos8/restaurant-order-api`
 **Default branch:** `main`
-**Latest verified code commit:** `8a50f18` — **Remove accidental duplicate API project folder**
-**Current phase:** Phase 2 (Vue frontend) complete. Full flow works end to end: browse menu, build a cart, checkout, see a receipt, backed by the real C# API.
-**Next exact feature:** Phase 3 (quality and interview readiness): `npm run build` verification, README update with screenshots, and practicing explaining the architecture out loud. See roadmap section 11.
+**Latest verified code commit:** `e87f888` — **Add test for default order status on creation**
+**Current phase:** Phase 3 (polish and interview readiness) mostly complete. Styling pass done, `npm run build` verified, owner wrote their own passing xUnit test from scratch (10/10 passing). Remaining: README update to include the frontend, and interview-talk practice.
+**Next exact feature:** Update README.md to document the Vue frontend (currently backend-only) and add a screenshot; then shift fully into interview prep.
 **Working tree at checkpoint:** Local `main` clean and synchronized with `origin/main`
 
 ## 1. Purpose
@@ -194,7 +194,7 @@ Verified the full order lifecycle end-to-end: seeded menu returned correctly; or
 | MenuItems CRUD | Complete |
 | Orders: create/cart/pay/receipt | Complete |
 | Business rule enforcement | Complete |
-| xUnit test suite | Complete (9/9) |
+| xUnit test suite | Complete (10/10, includes one test the owner wrote from scratch) |
 | Manual API verification | Complete |
 | README | Complete |
 | Pushed to GitHub (private) | Complete |
@@ -204,8 +204,9 @@ Verified the full order lifecycle end-to-end: seeded menu returned correctly; or
 | Cart UI | Complete (client-side only) |
 | Checkout UI | Complete |
 | Receipt view | Complete |
-| Frontend build/lint verification | Not started |
-| Screenshots in README | Not started |
+| Frontend styling pass | Complete |
+| Frontend build verification (`npm run build`) | Complete |
+| README updated for frontend + screenshots | Not started |
 | Deployment | Not planned yet (stretch) |
 | Authentication | Not planned yet (stretch) |
 
@@ -267,14 +268,15 @@ dotnet test
 - [x] Checkout page (`POST /api/orders/{id}/pay`)
 - [x] Receipt view (uses the response from `Pay` directly; `GET /api/orders/{id}/receipt` exists and works but isn't called in this flow)
 - [x] Loading, empty, and error states (menu loading/error; cart empty state; checkout error message)
-- [ ] Basic, clean styling (no framework required, but a lightweight one is fine)
+- [x] Basic, clean styling (plain CSS with custom properties, no framework)
 
 ### Phase 3 — Quality and interview readiness
 
-- [ ] `npm run build` verified (production bundle succeeds)
-- [ ] Manual end-to-end browser test of the full flow: browse menu → cart → checkout → receipt
+- [x] `npm run build` verified (production bundle succeeds: 686ms, 19 modules, ~67KB JS / ~4KB CSS before gzip)
+- [x] Manual end-to-end browser test of the full flow: browse menu → cart → checkout → receipt
+- [x] Owner wrote and verified their own xUnit test from scratch (`NewOrder_DefaultsToOpenStatus`), including intentionally breaking two existing assertions to see real `[FAIL]` output before restoring them
 - [ ] README updated with frontend setup instructions and screenshots
-- [ ] `docs/PROJECT_MEMORY.md` and `docs/DECISIONS.md` updated with frontend decisions
+- [x] `docs/PROJECT_MEMORY.md` and `docs/DECISIONS.md` updated with frontend decisions
 - [ ] Practice explaining the architecture end-to-end (backend + frontend) out loud
 
 ### Phase 4 — Stretch (only if time remains after Phase 3)
