@@ -33,10 +33,23 @@ const emit = defineEmits(['start-new-order'])
 </template>
 
 <style scoped>
-.receipt { max-width: 480px; margin: 40px auto; font-family: sans-serif; }
-.order-id { font-weight: 700; }
-ul { list-style: none; padding: 0; }
-li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #ddd; }
-.total-row { display: flex; justify-content: space-between; font-weight: 700; padding-top: 10px; }
-button { margin-top: 20px; padding: 10px; width: 100%; cursor: pointer; }
+.receipt {
+  margin: 30px auto 0;
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  text-align: center;
+}
+.receipt h2 {
+  margin: 0 0 4px;
+  color: var(--color-accent-dark);
+}
+.order-id { font-weight: 700; margin: 0 0 12px; }
+.receipt p { margin: 4px 0; color: var(--color-text-muted); font-size: 0.9rem; }
+ul { list-style: none; padding: 0; margin: 16px 0; text-align: left; }
+li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--color-border); }
+.total-row { display: flex; justify-content: space-between; font-weight: 700; padding-top: 10px; font-size: 1.1rem; }
+button { margin-top: 20px; padding: 12px; width: 100%; cursor: pointer; }
 </style>

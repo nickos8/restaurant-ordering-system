@@ -42,4 +42,14 @@ public class OrderTotalTests
         Assert.Equal(150.00m, order.Total);
         Assert.NotEqual(menuItem.Price, order.Total);
     }
+
+    [Fact]
+
+public void NewOrder_DefaultsToOpenStatus()
+    {
+        var order = new Order();
+
+        Assert.Equal(OrderStatus.Open, order.Status);
+    }
+
 }

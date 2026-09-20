@@ -85,31 +85,52 @@ function handleStartNewOrder() {
 </script>
 
 <template>
-  <template v-if="receipt">
-    <Receipt :receipt="receipt" @start-new-order="handleStartNewOrder" />
-  </template>
+  <div class="page">
+    <header class="page-header">
+      <h1> InTouch cx Restaurant Ordering System</h1>
+    </header>
 
-  <template v-else>
-    <MenuList @add-to-cart="handleAddToCart" />
-    <p v-if="checkoutError" class="checkout-error">{{ checkoutError }}</p>
-    <Cart
-      :items="cart"
-      :is-checking-out="isCheckingOut"
-      @increase-item="handleIncreaseItem"
-      @decrease-item="handleDecreaseItem"
-      @checkout="handleCheckout"
-    />
-  </template>
+    <template v-if="receipt">
+      <Receipt :receipt="receipt" @start-new-order="handleStartNewOrder" />
+    </template>
+
+    <template v-else>
+      <MenuList @add-to-cart="handleAddToCart" />
+      <p v-if="checkoutError" class="checkout-error">{{ checkoutError }}</p>
+      <Cart
+        :items="cart"
+        :is-checking-out="isCheckingOut"
+        @increase-item="handleIncreaseItem"
+        @decrease-item="handleDecreaseItem"
+        @checkout="handleCheckout"
+      />
+    </template>
+  </div>
 </template>
 
 <style scoped>
+.page {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.page-header h1 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
 .checkout-error {
-  max-width: 480px;
-  margin: 10px auto;
+  margin: 10px 0;
   padding: 10px;
-  background: #fdecea;
-  color: #b3261e;
-  border-radius: 4px;
+  background: var(--color-danger-bg);
+  color: var(--color-danger-text);
+  border-radius: var(--radius);
   text-align: center;
 }
 </style>

@@ -39,11 +39,27 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.menu-list { max-width: 480px; margin: 40px auto; font-family: sans-serif; }
-ul { list-style: none; padding: 0; }
-li { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #ddd; }
-.name { flex: 1; }
-.category { color: #888; font-size: .85rem; }
-.price { font-weight: 600; }
-button { padding: 4px 10px; cursor: pointer; }
+.menu-list { margin: 0 auto 20px; }
+.menu-list h2 {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 10px;
+}
+ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.name { flex: 1; font-weight: 600; }
+.category { color: var(--color-text-muted); font-size: 0.8rem; }
+.price { font-weight: 600; min-width: 64px; text-align: right; }
+button { padding: 6px 12px; cursor: pointer; }
 </style>
