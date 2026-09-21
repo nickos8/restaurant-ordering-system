@@ -87,7 +87,7 @@ function handleStartNewOrder() {
 <template>
   <div class="page">
     <header class="page-header">
-      <h1> InTouch cx Restaurant Ordering System</h1>
+      <h1>Restaurant Ordering System</h1>
     </header>
 
     <template v-if="receipt">
