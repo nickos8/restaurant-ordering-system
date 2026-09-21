@@ -1,17 +1,25 @@
 # Restaurant Order API
 
-A restaurant ordering system built with C# and ASP.NET Core, covering menu management and the full order lifecycle: select items, manage a cart, pay, and retrieve a receipt.
+A full-stack restaurant ordering system: a C# / ASP.NET Core backend and a Vue 3 frontend, covering menu management and the full order lifecycle: browse the menu, build a cart, check out, and get a receipt.
+
+![Menu and cart screenshot](docs/screenshot-app.png)
 
 ## Why this project
 
-Built to demonstrate C# / ASP.NET Core backend skills: REST API design, EF Core with a relational database, request validation, and automated tests.
+Built to demonstrate C# / ASP.NET Core backend skills (REST API design, EF Core with a relational database, request validation, automated tests) alongside a Vue 3 frontend consuming that API end to end.
 
 ## Tech stack
 
+**Backend**
 - C# / .NET 8
 - ASP.NET Core Web API (controller-based)
 - Entity Framework Core + SQLite
 - xUnit + EF Core InMemory for tests
+
+**Frontend**
+- Vue 3 (Composition API, `<script setup>`) + Vite
+- Plain CSS with custom properties, no framework
+- Talks to the API directly with `fetch`
 
 ## Features
 
@@ -33,21 +41,42 @@ src/RestaurantOrderApi.Api/
 tests/RestaurantOrderApi.Tests/
   OrderTotalTests.cs        unit tests for order total calculation
   OrdersControllerTests.cs  controller tests for cart/pay/receipt rules
+frontend/
+  src/components/  MenuList.vue, Cart.vue, Receipt.vue
+  src/App.vue      owns shared state, orchestrates checkout
+  src/style.css    shared design tokens (colors, spacing)
 ```
 
 ## Running locally
 
+Two processes run side by side: the API and the frontend dev server.
+
+**1. Start the API**
 ```bash
 cd src/RestaurantOrderApi.Api
 dotnet run
 ```
+Applies EF Core migrations automatically and seeds a starter menu. Listens on `http://localhost:5281`. Swagger UI is available at `/swagger` in development.
 
-The API applies EF Core migrations automatically on startup and seeds a starter menu. Swagger UI is available at `/swagger` in development.
+**2. Start the frontend** (in a separate terminal)
+```bash
+cd frontend
+npm install
+npm run dev
+```
+Opens at `http://localhost:5173`. The API's CORS policy is configured specifically for this origin.
 
 ## Running tests
 
 ```bash
 dotnet test
+```
+
+## Building the frontend for production
+
+```bash
+cd frontend
+npm run build
 ```
 
 ## API overview
